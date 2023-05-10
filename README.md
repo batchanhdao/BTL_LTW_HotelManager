@@ -1,2 +1,4 @@
 # BTL_LTW_HotelManager
-bài tập lớn môn lập trình web - nhóm 18 - Quản lý khách sạn
+BÀI TẬP LỚN MÔN LẬP TRÌNH WEB - nhóm lớp 05 - nhóm bài tập 18.
+WEB: Quản lý khách sạn
+
