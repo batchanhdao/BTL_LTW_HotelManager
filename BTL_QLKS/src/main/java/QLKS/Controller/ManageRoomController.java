@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import QLKS.Entity.Booking;
 import QLKS.Entity.Room;
+import QLKS.Repository.BookingRepository;
 import QLKS.Repository.RoomRepository;
 
 @Controller
@@ -23,6 +25,9 @@ public class ManageRoomController {
 
 	@Autowired 
 	private RoomRepository roomRepo;
+	
+	@Autowired 
+	private BookingRepository bookingRepo;
 
 	@ModelAttribute("alteredRoom")
 	public Room room() {
@@ -83,6 +88,11 @@ public class ManageRoomController {
 	// tiếp nhận yêu cầu xóa phòng
 	@GetMapping("/delete/{id}")
 	public String deleteRoom(@PathVariable("id") Long id) {
+		Room room = roomRepo.findById(id).orElse(null);
+		List<Booking> bookings = bookingRepo.findAllByRoom(room);
+		for(Booking booking : bookings) {
+			bookingRepo.deleteById(booking.getId());
+		}
 		roomRepo.deleteById(id);
 		return "redirect:/manage/room";
 

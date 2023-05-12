@@ -2,6 +2,7 @@ package QLKS.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -19,11 +20,13 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import QLKS.Entity.Account;
+import QLKS.Entity.Booking;
+import QLKS.Entity.Client;
 import QLKS.Entity.User;
 import QLKS.Repository.AccountRepository;
+import QLKS.Repository.BookingRepository;
 import QLKS.Repository.ClientRepository;
 import QLKS.Repository.UserRepository;
-import QLKS.Entity.Client;
 
 
 @Controller
@@ -40,6 +43,9 @@ public class AccountController {
 
 	@Autowired
 	private ClientRepository clientRepo;
+	
+	@Autowired
+	private BookingRepository bookingRepo;
 	
 	@ModelAttribute("addedUser") 
 	public User addedUser() {
@@ -195,10 +201,15 @@ public class AccountController {
 	@GetMapping("/delete/{id}")
 	public String deleteAccount(@PathVariable("id") Long id) {
 		Account account = accountRepo.findById(id).orElse(null);
-		Long userId = account.getUser().getId();
 		accountRepo.deleteById(id);
-//		clientRepo.deleteById(id);
-//		userRepo.deleteById(userId);
+		
+		Client client = clientRepo.findByUser(account.getUser()).orElse(null);
+		Booking booking = bookingRepo.findByClient(client).orElse(null);
+		bookingRepo.deleteById(booking.getId());
+		clientRepo.deleteById(client.getId());
+		
+		Long userId = account.getUser().getId();
+		userRepo.deleteById(userId);
 		return "redirect:/account/list";
 	}
 	@GetMapping("/role/{id}")
